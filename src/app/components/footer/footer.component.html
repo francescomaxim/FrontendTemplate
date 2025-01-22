@@ -1,1 +1,57 @@
-<p>footer works!</p>
+<footer>
+  <div class="container">
+    <div class="footer-content">
+      <div class="footer-section about">
+        <h3>Despre Noi</h3>
+        <p>
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed
+          maximus lectus.
+        </p>
+        <div class="contact">
+          <span><i class="fas fa-phone"></i> &nbsp; 123-456-789</span>
+          <span><i class="fas fa-envelope"></i> &nbsp; info exemplu.com</span>
+        </div>
+      </div>
+      <div class="footer-section links">
+        <h3>Link-uri Utile</h3>
+        <ul>
+          <li><a routerLink="/">Acasă</a></li>
+          <li><a routerLink="/despre">Despre</a></li>
+          <li><a routerLink="/servicii">Servicii</a></li>
+          <li><a routerLink="/contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-section contact-form">
+        <h3>Contactează-ne</h3>
+        <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
+          <input
+            type="email"
+            name="email"
+            class="text-input contact-input"
+            placeholder="Adresa ta de email..."
+            required
+            [(ngModel)]="model.email"
+          />
+          <textarea
+            name="message"
+            class="text-input contact-input"
+            placeholder="Mesajul tău..."
+            required
+            [(ngModel)]="model.message"
+          ></textarea>
+          <button
+            type="submit"
+            class="btn btn-primary"
+            [disabled]="!contactForm.form.valid"
+          >
+            <i class="fas fa-envelope"></i>
+            Trimite
+          </button>
+        </form>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      &copy; {{ year }} Toate drepturile rezervate | Proiectat de [Numele Tău]
+    </div>
+  </div>
+</footer>
