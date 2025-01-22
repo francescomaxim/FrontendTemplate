@@ -1,1 +1,30 @@
-<p>header works!</p>
+<header>
+  <div class="container">
+    <a routerLink="/" class="logo">Logo-ul Meu</a>
+    <nav>
+      <ul [class.mobile-opened]="mobileMenuOpen">
+        <li><a routerLink="/despre">Despre</a></li>
+        <li class="dropdown">
+          <a class="dropdown-toggle"
+            >Servicii <i class="fas fa-caret-down"></i
+          ></a>
+          <ul class="dropdown-menu">
+            <li><a routerLink="/servicii/web-design">Web Design</a></li>
+            <li>
+              <a routerLink="/servicii/dezvoltare-aplicatii"
+                >Dezvoltare Aplicații</a
+              >
+            </li>
+            <li><a routerLink="/servicii/optimizare-seo">Optimizare SEO</a></li>
+          </ul>
+        </li>
+        <li><a routerLink="/contact">Contact</a></li>
+        <li class="mobile-close" (click)="toggleMobileMenu()">&times;</li>
+      </ul>
+      <div class="mobile-toggle" (click)="toggleMobileMenu()">
+        <i class="fas fa-bars" *ngIf="!mobileMenuOpen"></i>
+        <i class="fas fa-times" *ngIf="mobileMenuOpen"></i>
+      </div>
+    </nav>
+  </div>
+</header>
