@@ -1,6 +1,7 @@
 import { NgIf } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, signal } from '@angular/core';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
+import { HeaderModel } from './header.model';
 
 @Component({
   selector: 'app-header',
@@ -14,4 +15,8 @@ export class HeaderComponent {
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
   }
+
+  headerData = signal<HeaderModel>({
+    title: 'My Title',
+  });
 }

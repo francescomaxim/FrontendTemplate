@@ -1,4 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, input } from '@angular/core';
+import { LanguageSwitcherService } from './language-switcher.service';
+import { HeaderModel } from '../header/header.model';
 
 @Component({
   selector: 'app-language-switcher',
@@ -7,11 +9,14 @@ import { Component } from '@angular/core';
   styleUrl: './language-switcher.component.css',
 })
 export class LanguageSwitcherComponent {
+  private languageService = inject(LanguageSwitcherService);
+
   selectedLanguage: string = 'EN';
 
-  // Funcția care gestionează selectarea unei limbi
+  headerData = input.required<HeaderModel>();
+
   selectLanguage(language: string): void {
     this.selectedLanguage = language;
-    console.log(`Language selected: ${language}`);
+    this.languageService.translate(this.headerData, this.selectedLanguage);
   }
 }
