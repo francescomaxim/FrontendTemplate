@@ -1,0 +1,128 @@
+aside {
+  position: fixed;
+  top: 0;
+  left: -250px;
+  /* Initially hidden off-screen */
+  width: 250px;
+  height: 100vh;
+  background-color: #333;
+  color: #fff;
+  transition: left 0.3s ease;
+  z-index: 1000;
+  /* Ensure it's above other content */
+}
+
+aside.open {
+  left: 0;
+}
+
+.sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  border-bottom: 1px solid #555;
+}
+
+.close-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: #fff;
+  font-size: 20px;
+}
+
+.sidebar-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.sidebar-nav li a {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #fff;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-nav li a:hover,
+.sidebar-nav li a.active {
+  background-color: #555;
+}
+
+.sidebar-nav li a i {
+  margin-right: 15px;
+  width: 20px;
+  /* Fixed width for alignment */
+}
+
+.submenu {
+  display: none;
+  background-color: #444;
+}
+
+.sidebar-nav li:hover .submenu {
+  display: block;
+}
+
+.submenu li a {
+  padding-left: 40px;
+  /* Indent submenu items */
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  /* Below the sidebar, above other content */
+  display: none;
+}
+
+.overlay.active {
+  display: block;
+}
+
+.hamburger-btn {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1001; /* Asigura-te ca e deasupra sidebar-ului */
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 10px;
+}
+
+.hamburger-btn i {
+  font-size: 24px;
+  color: #000; /* Alege o culoare potrivita pentru header-ul tau */
+}
+
+/* Responsive Styles */
+/* @media (max-width: 768px) {
+  aside {
+    width: 85%;
+    left: -100%; */
+/* Adjust the initial hiding position */
+/* }
+  aside.open {
+    left: 0;
+  }
+} */
+
+/* aside.always-open {
+  left: 0;
+  width: 250px;
+} */
+
+/* @media (max-width: 768px) {
+  aside.always-open {
+    width: 0;
+  }
+} */

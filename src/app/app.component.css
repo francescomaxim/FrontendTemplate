@@ -1,0 +1,26 @@
+.main-content {
+  display: flex;
+  min-height: calc(100vh - 50px); /* Adjust footer height if needed */
+}
+
+main {
+  flex-grow: 1;
+  padding: 20px;
+  transition: transform 0.3s ease;
+}
+
+main.shifted {
+  transform: translateX(250px); /* Adjust based on your sidebar width */
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    min-height: calc(100vh - 100px);
+  }
+  main {
+    padding: 10px;
+  }
+  main.shifted {
+    transform: translateX(85%); /* Adjust based on your sidebar width */
+  }
+}
