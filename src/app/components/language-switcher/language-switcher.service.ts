@@ -13,20 +13,20 @@ export class LanguageSwitcherService {
   private key = key;
 
   translate(data: Signal<HeaderModel>, language: string) {
-    this.httpClient
-      .post<{
-        data: {
-          translations: {
-            translatedText: string;
-          }[];
-        };
-      }>(this.url + this.key, {
-        q: [data().title],
-        target: language,
-      })
-      .subscribe((response) => {
-        console.log(response);
-        data().title = response.data.translations[0].translatedText;
-      });
+    // this.httpClient
+    //   .post<{
+    //     data: {
+    //       translations: {
+    //         translatedText: string;
+    //       }[];
+    //     };
+    //   }>(this.url + this.key, {
+    //     q: [data().title],
+    //     target: language,
+    //   })
+    //   .subscribe((response) => {
+    //     console.log(response);
+    //     data().title = response.data.translations[0].translatedText;
+    //   });
   }
 }
