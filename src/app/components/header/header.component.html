@@ -1,31 +1,33 @@
 <header>
   <div class="container">
-    <a routerLink="/" class="logo">{{ headerData().title }}</a>
+    <a routerLink="/" class="logo">{{
+      headerConfig()?.company?.name?.title
+    }}</a>
     <nav>
       <ul [class.mobile-opened]="mobileMenuOpen">
-        <li><a routerLink="/despre">Despre</a></li>
+        @for(link of headerConfig()!.menu; track link.link){ @if(link.links ==
+        undefined){
+        <li>
+          <a routerLink="/despre">{{ link.link }}</a>
+        </li>
+        }@else {
         <li class="dropdown">
           <a class="dropdown-toggle"
-            >Servicii <i class="fas fa-caret-down"></i
+            >{{ link.link }} <i class="fas fa-caret-down"></i
           ></a>
           <ul class="dropdown-menu">
-            <li><a routerLink="/servicii/web-design">Web Design</a></li>
+            @for(miniLinks of link.links; track miniLinks){
             <li>
-              <a routerLink="/servicii/dezvoltare-aplicatii"
-                >Dezvoltare Aplicații</a
-              >
+              <a routerLink="/servicii/web-design">{{ miniLinks }}</a>
             </li>
-            <li><a routerLink="/servicii/optimizare-seo">Optimizare SEO</a></li>
+            }
           </ul>
         </li>
-        <li><a routerLink="/contact">Contact</a></li>
-
+        } }
         <li class="mobile-close" (click)="toggleMobileMenu()">&times;</li>
 
         <li>
-          <app-language-switcher
-            [headerData]="headerData()"
-          ></app-language-switcher>
+          <app-language-switcher></app-language-switcher>
         </li>
       </ul>
       <div class="mobile-toggle" (click)="toggleMobileMenu()">

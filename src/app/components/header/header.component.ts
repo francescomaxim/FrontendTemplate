@@ -1,7 +1,7 @@
 import { NgIf } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { LanguageSwitcherComponent } from '../language-switcher/language-switcher.component';
-import { HeaderModel } from './header.model';
+import { ConfigService } from '../../config.service';
 
 @Component({
   selector: 'app-header',
@@ -10,13 +10,16 @@ import { HeaderModel } from './header.model';
   styleUrls: ['./header.component.css'],
 })
 export class HeaderComponent {
-  mobileMenuOpen = false;
+  //config part
+  private config = inject(ConfigService);
+  headerConfig = this.config.headerConfig;
+  ngOnInit() {
+    this.config.getHeaderConfig();
+  }
 
+  //mobile
+  mobileMenuOpen = false;
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
   }
-
-  headerData = signal<HeaderModel>({
-    title: 'My Title',
-  });
 }

@@ -1,6 +1,5 @@
 import { Component, inject, input } from '@angular/core';
 import { LanguageSwitcherService } from './language-switcher.service';
-import { HeaderModel } from '../header/header.model';
 
 @Component({
   selector: 'app-language-switcher',
@@ -13,10 +12,10 @@ export class LanguageSwitcherComponent {
 
   selectedLanguage: string = 'EN';
 
-  headerData = input.required<HeaderModel>();
+  // headerData = input.required<HeaderModel>();
 
   selectLanguage(language: string): void {
     this.selectedLanguage = language;
-    this.languageService.translate(this.headerData, this.selectedLanguage);
+    // this.languageService.translate(this.headerData, this.selectedLanguage);
   }
 }

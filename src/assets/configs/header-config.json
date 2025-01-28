@@ -1,0 +1,25 @@
+{
+  "company": {
+    "name": {
+      "show": "true",
+      "title": "My Title2"
+    },
+    "logo": {
+      "show": "false",
+      "url": "url",
+      "alt": "alt"
+    }
+  },
+  "menu": [
+    {
+      "link": "Despre"
+    },
+    {
+      "link": "Servicii",
+      "links": ["Dropdown 1", "Dropdown 2", "Dropdown 3"]
+    },
+    {
+      "link": "Contact"
+    }
+  ]
+}
