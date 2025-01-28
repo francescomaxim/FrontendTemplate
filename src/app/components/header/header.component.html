@@ -5,7 +5,7 @@
     }}</a>
     <nav>
       <ul [class.mobile-opened]="mobileMenuOpen">
-        @for(link of headerConfig()!.menu; track link.link){ @if(link.links ==
+        @for(link of headerConfig()?.menu; track link.link){ @if(link.links ==
         undefined){
         <li>
           <a routerLink="/despre">{{ link.link }}</a>
