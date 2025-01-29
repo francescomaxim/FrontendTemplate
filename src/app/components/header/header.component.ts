@@ -13,6 +13,10 @@ export class HeaderComponent {
   //config part
   private config = inject(ConfigService);
   headerConfig = this.config.headerConfig;
+  sideMenuConfig = this.config.sideMenuConfig;
+  heroConfig = this.config.heroConfig;
+  footerConfig = this.config.footerConfig;
+
   ngOnInit() {
     this.config.getHeaderConfig();
   }
