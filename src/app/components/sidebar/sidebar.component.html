@@ -1,59 +1,45 @@
 @if(isOpen()){
 <aside [ngClass]="{ open: isOpen, 'always-open': !isMobileView }">
   <div class="sidebar-header">
-    <h3>Meniu</h3>
+    <h3>{{ sideMenuConfig()?.title }}</h3>
     <button class="close-btn" (click)="toggleSidebar()">
       <i class="fas fa-times"></i>
     </button>
   </div>
   <ul class="sidebar-nav">
+    @for(link of sideMenuConfig()?.links; track link.title){ @if(link.miniTitles
+    == undefined){
     <li>
       <a
         routerLink="/"
         routerLinkActive="active"
         [routerLinkActiveOptions]="{ exact: true }"
       >
-        <i class="fas fa-home"></i> Acasă
+        <i class="fas fa-home"></i> {{ link.title }}
       </a>
     </li>
-    <li>
-      <a routerLink="/despre" routerLinkActive="active">
-        <i class="fas fa-info-circle"></i> Despre
-      </a>
-    </li>
+    }@else {
+
     <li>
       <a
         routerLink="/servicii"
         routerLinkActive="active"
         class="dropdown-toggle"
       >
-        <i class="fas fa-cogs"></i> Servicii
+        <i class="fas fa-cogs"></i> {{ link.title }}
       </a>
       <ul class="submenu">
+        @for(miniLink of link.miniTitles; track miniLink){
         <li>
-          <a routerLink="/servicii/web-design" routerLinkActive="active"
-            >Web Design</a
-          >
+          <a routerLink="/servicii/web-design" routerLinkActive="active">{{
+            miniLink
+          }}</a>
         </li>
-        <li>
-          <a
-            routerLink="/servicii/dezvoltare-aplicatii"
-            routerLinkActive="active"
-            >Dezvoltare Aplicații</a
-          >
-        </li>
-        <li>
-          <a routerLink="/servicii/optimizare-seo" routerLinkActive="active"
-            >Optimizare SEO</a
-          >
-        </li>
+        }
       </ul>
     </li>
-    <li>
-      <a routerLink="/contact" routerLinkActive="active">
-        <i class="fas fa-envelope"></i> Contact
-      </a>
-    </li>
+
+    } }
   </ul>
 </aside>
 

@@ -2,5 +2,6 @@
   "show-header": false,
   "show-side-menu": false,
   "show-footer": false,
-  "show-language-switcher": false
+  "show-language-switcher": false,
+  "show-hero": false
 }

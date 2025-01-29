@@ -3,4 +3,5 @@ export interface ConfigModel {
   showSideMenu: boolean;
   showFooter: boolean;
   showLanguageSwitcher: boolean;
+  showHero: boolean;
 }

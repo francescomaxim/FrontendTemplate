@@ -1,4 +1,5 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
+import { ConfigService } from '../../config.service';
 
 @Component({
   selector: 'app-hero',
@@ -6,4 +7,11 @@ import { Component } from '@angular/core';
   templateUrl: './hero.component.html',
   styleUrl: './hero.component.css',
 })
-export class HeroComponent {}
+export class HeroComponent implements OnInit {
+  //config part
+  private config = inject(ConfigService);
+  heroConfig = this.config.heroConfig;
+  ngOnInit(): void {
+    this.config.getHeroConfig();
+  }
+}

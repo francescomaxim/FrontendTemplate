@@ -1,6 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component, ChangeDetectorRef, Input, signal } from '@angular/core';
+import {
+  Component,
+  ChangeDetectorRef,
+  Input,
+  signal,
+  inject,
+  OnInit,
+} from '@angular/core';
 import { RouterModule } from '@angular/router';
+import { ConfigService } from '../../config.service';
 
 @Component({
   selector: 'app-sidebar',
@@ -8,7 +16,7 @@ import { RouterModule } from '@angular/router';
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })
-export class SidebarComponent {
+export class SidebarComponent implements OnInit {
   @Input() isMobileView!: boolean;
   isOpen = signal<true | false>(false); // Sidebar-ul este inițial închis
 
@@ -17,5 +25,12 @@ export class SidebarComponent {
   toggleSidebar() {
     this.isOpen.set(!this.isOpen());
     this.cdr.detectChanges();
+  }
+
+  private config = inject(ConfigService);
+  sideMenuConfig = this.config.sideMenuConfig;
+
+  ngOnInit(): void {
+    this.config.getSideMenuConfig();
   }
 }
