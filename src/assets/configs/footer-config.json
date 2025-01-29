@@ -10,5 +10,11 @@
   "links": {
     "title": "Link-uri Utile",
     "links": ["Acasă", "Despre", "Servicii", "Contact"]
+  },
+  "form": {
+    "title": "Contactează-ne",
+    "mailPlaceholder": "Adresa ta de email",
+    "messagePlaceholder": "Mesajul tau",
+    "buttonPlaceholder": "Trimite"
   }
 }

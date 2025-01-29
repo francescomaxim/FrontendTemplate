@@ -11,4 +11,10 @@ export interface FooterConfigModel {
     title: string;
     links: string[];
   };
+  form: {
+    title: string;
+    mailPlaceholder: string;
+    messagePlaceholder: string;
+    buttonPlaceholder: string;
+  };
 }

@@ -28,20 +28,20 @@
         </ul>
       </div>
       <div class="footer-section contact-form">
-        <h3>Contactează-ne</h3>
+        <h3>{{ footerConfig()?.form?.title }}</h3>
         <form (ngSubmit)="onSubmit()" #contactForm="ngForm">
           <input
             type="email"
             name="email"
             class="text-input contact-input"
-            placeholder="Adresa ta de email..."
+            placeholder="{{ footerConfig()?.form?.mailPlaceholder }}"
             required
             [(ngModel)]="model.email"
           />
           <textarea
             name="message"
             class="text-input contact-input"
-            placeholder="Mesajul tău..."
+            placeholder="{{ footerConfig()?.form?.messagePlaceholder }}"
             required
             [(ngModel)]="model.message"
           ></textarea>
@@ -51,7 +51,7 @@
             [disabled]="!contactForm.form.valid"
           >
             <i class="fas fa-envelope"></i>
-            Trimite
+            {{ footerConfig()?.form?.buttonPlaceholder }}
           </button>
         </form>
       </div>
