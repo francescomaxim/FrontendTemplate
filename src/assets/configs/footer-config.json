@@ -1,0 +1,14 @@
+{
+  "title": "© 2025 Toate drepturile rezervate | Proiectat de [Numele Tău]",
+  "style": "large",
+  "about": {
+    "title": "Despre Noi",
+    "description": "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed maximus lectus.",
+    "phone": "07 n-am cartela",
+    "email": "email here"
+  },
+  "links": {
+    "title": "Link-uri Utile",
+    "links": ["Acasă", "Despre", "Servicii", "Contact"]
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "title": "Meniu",
+  "links": [
+    {
+      "icon": "icon1",
+      "title": "Acasa"
+    },
+    {
+      "icon": "icon2",
+      "title": "Despre"
+    },
+    {
+      "icon": "icon3",
+      "title": "Servicii",
+      "miniTitles": ["Link1", "Link2", "Link3"]
+    },
+    {
+      "icon": "icon4",
+      "title": "Contact"
+    }
+  ]
+}
