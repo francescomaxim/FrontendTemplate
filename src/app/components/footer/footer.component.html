@@ -2,23 +2,29 @@
   <div class="container">
     <div class="footer-content">
       <div class="footer-section about">
-        <h3>Despre Noi</h3>
+        <h3>{{ footerConfig()?.about?.title }}</h3>
         <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris sed
-          maximus lectus.
+          {{ footerConfig()?.about?.description }}
         </p>
         <div class="contact">
-          <span><i class="fas fa-phone"></i> &nbsp; 123-456-789</span>
-          <span><i class="fas fa-envelope"></i> &nbsp; info exemplu.com</span>
+          <span
+            ><i class="fas fa-phone"></i> &nbsp;
+            {{ footerConfig()?.about?.phone }}</span
+          >
+          <span
+            ><i class="fas fa-envelope"></i> &nbsp;
+            {{ footerConfig()?.about?.email }}</span
+          >
         </div>
       </div>
       <div class="footer-section links">
-        <h3>Link-uri Utile</h3>
+        <h3>{{ footerConfig()?.links?.title }}</h3>
         <ul>
-          <li><a routerLink="/">Acasă</a></li>
-          <li><a routerLink="/despre">Despre</a></li>
-          <li><a routerLink="/servicii">Servicii</a></li>
-          <li><a routerLink="/contact">Contact</a></li>
+          @for(link of footerConfig()?.links?.links; track link){
+          <li>
+            <a routerLink="/">{{ link }}</a>
+          </li>
+          }
         </ul>
       </div>
       <div class="footer-section contact-form">
@@ -51,7 +57,7 @@
       </div>
     </div>
     <div class="footer-bottom">
-      &copy; {{ year }} Toate drepturile rezervate | Proiectat de [Numele Tău]
+      {{ footerConfig()?.title }}
     </div>
   </div>
 </footer>

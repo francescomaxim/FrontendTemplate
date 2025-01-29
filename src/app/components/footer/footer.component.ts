@@ -1,5 +1,6 @@
-import { Component } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ConfigService } from '../../config.service';
 
 @Component({
   selector: 'app-footer',
@@ -7,7 +8,7 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
 })
-export class FooterComponent {
+export class FooterComponent implements OnInit {
   year: number = new Date().getFullYear();
 
   model: any = {}; // Model pentru formular
@@ -17,5 +18,12 @@ export class FooterComponent {
     console.log('Formular trimis!', this.model);
     alert('Formularul a fost trimis! (Funcționalitate de implementat)');
     this.model = {}; // Resetează formularul
+  }
+
+  //CONFIG
+  private config = inject(ConfigService);
+  footerConfig = this.config.footerConfig;
+  ngOnInit(): void {
+    this.config.getFooterConfig();
   }
 }
