@@ -1,7 +1,7 @@
 {
-  "show-header": false,
-  "show-side-menu": false,
-  "show-footer": false,
-  "show-language-switcher": false,
-  "show-hero": false
+  "showHeader": true,
+  "showSideMenu": true,
+  "showFooter": true,
+  "showLanguageSwitcher": true,
+  "showHero": true
 }

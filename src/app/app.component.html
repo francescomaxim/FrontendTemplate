@@ -1,9 +1,18 @@
+@if(appConfig()?.showHeader == true){
 <app-header></app-header>
+}
 <div class="main-content">
+  @if(appConfig()?.showSideMenu == true){
   <app-sidebar></app-sidebar>
+  }
   <main>
+    @if(appConfig()?.showHero == true){
     <app-hero></app-hero>
+    }
     <router-outlet></router-outlet>
   </main>
 </div>
+
+@if(appConfig()?.showFooter == true){
 <app-footer></app-footer>
+}
