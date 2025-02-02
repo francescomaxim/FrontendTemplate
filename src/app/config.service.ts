@@ -10,6 +10,7 @@ import { HeaderConfigModel } from '../assets/models/header-config.model';
 import { HeroConfigModel } from '../assets/models/hero-config.model';
 import { SideMenuConfigModel } from '../assets/models/side-menu-config.model';
 import { FooterConfigModel } from '../assets/models/footer-config.model';
+import { ConfigModel } from '../assets/models/config.model';
 
 @Injectable({
   providedIn: 'root',
@@ -17,11 +18,13 @@ import { FooterConfigModel } from '../assets/models/footer-config.model';
 export class ConfigService {
   private httpClient = inject(HttpClient);
 
+  private appConfigUrl = 'assets/configs/config.json';
   private headerConfigUrl = 'assets/configs/header-config.json';
   private heroConfigUrl = 'assets/configs/hero-config.json';
   private sideMenuConfigUrl = 'assets/configs/side-menu-config.json';
   private footerConfigUrl = 'assets/configs/footer-config.json';
 
+  appConfig = signal<ConfigModel | undefined>(undefined);
   headerConfig = signal<HeaderConfigModel | undefined>(undefined);
   heroConfig = signal<HeroConfigModel | undefined>(undefined);
   sideMenuConfig = signal<SideMenuConfigModel | undefined>(undefined);
@@ -31,6 +34,10 @@ export class ConfigService {
     return this.httpClient.get<T>(url).subscribe((response) => {
       config.set(response);
     });
+  }
+
+  getAppConfig() {
+    this.fetchData(this.appConfigUrl, this.appConfig);
   }
 
   getHeaderConfig() {
