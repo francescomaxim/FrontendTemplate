@@ -2,6 +2,6 @@
   "showHeader": true,
   "showSideMenu": true,
   "showFooter": true,
-  "showLanguageSwitcher": true,
+  "showLanguageSwitcher": false,
   "showHero": true
 }

@@ -12,6 +12,7 @@ import { ConfigService } from '../../config.service';
 export class HeaderComponent {
   //config part
   private config = inject(ConfigService);
+  appConfig = this.config.appConfig;
   headerConfig = this.config.headerConfig;
   sideMenuConfig = this.config.sideMenuConfig;
   heroConfig = this.config.heroConfig;

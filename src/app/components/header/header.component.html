@@ -26,6 +26,7 @@
         } }
         <li class="mobile-close" (click)="toggleMobileMenu()">&times;</li>
 
+        @if(appConfig()?.showLanguageSwitcher == true){
         <li>
           <app-language-switcher
             [headerData]="headerConfig()!"
@@ -34,6 +35,7 @@
             [footerData]="footerConfig()!"
           ></app-language-switcher>
         </li>
+        }
       </ul>
       <div class="mobile-toggle" (click)="toggleMobileMenu()">
         <i class="fas fa-bars" *ngIf="!mobileMenuOpen"></i>
