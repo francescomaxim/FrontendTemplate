@@ -5,15 +5,21 @@ import { HeaderConfigModel } from '../../../assets/models/header-config.model';
 import { SideMenuConfigModel } from '../../../assets/models/side-menu-config.model';
 import { HeroConfigModel } from '../../../assets/models/hero-config.model';
 import { FooterConfigModel } from '../../../assets/models/footer-config.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
 export class LanguageSwitcherService {
   private httpClient = inject(HttpClient);
-
   private url = 'https://translation.googleapis.com/language/translate/v2?key=';
   private key = key;
+
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
+
+  private errorMessageSubject = new BehaviorSubject<string | null>(null);
+  errorMessage$ = this.errorMessageSubject.asObservable();
 
   translate(
     dataHeader: Signal<HeaderConfigModel>,
@@ -22,7 +28,26 @@ export class LanguageSwitcherService {
     dataFooter: Signal<FooterConfigModel>,
     language: string
   ) {
-    // Combinăm toate textele într-un singur array
+    const cacheKey = `translation_${language}`;
+    const cachedTranslation = localStorage.getItem(cacheKey);
+
+    this.loadingSubject.next(true);
+    this.errorMessageSubject.next(null); // Resetăm eroarea
+
+    if (cachedTranslation) {
+      setTimeout(() => {
+        this.applyTranslation(
+          JSON.parse(cachedTranslation),
+          dataHeader,
+          dataSideMenu,
+          dataHero,
+          dataFooter
+        );
+        this.loadingSubject.next(false);
+      }, 2000);
+      return;
+    }
+
     const textToTranslate = [
       ...this.makeItString(dataHeader()),
       ...this.makeItString2(dataSideMenu()),
@@ -30,120 +55,137 @@ export class LanguageSwitcherService {
       ...this.makeItString4(dataFooter()),
     ];
 
-    console.log(this.makeItString3(dataHero()));
+    const startTime = Date.now();
 
     this.httpClient
       .post<{
-        data: {
-          translations: {
-            translatedText: string;
-          }[];
-        };
-      }>(this.url + this.key, {
-        q: textToTranslate,
-        target: language,
-      })
-      .subscribe((response) => {
-        console.log(response);
+        data: { translations: { translatedText: string }[] };
+      }>(this.url + this.key, { q: textToTranslate, target: language })
+      .subscribe({
+        next: (response) => {
+          if (!response?.data?.translations?.length) {
+            this.handleError('Nu s-au primit date valide de la API.');
+            return;
+          }
 
-        // Extragem vectorul de string-uri traduse
-        const translatedStrings = response.data.translations.map((t) => {
-          t.translatedText = t.translatedText.replace('&#39;', "'");
-          return t.translatedText;
-        });
+          const translatedStrings = response.data.translations.map((t) =>
+            t.translatedText.replace('&#39;', "'")
+          );
 
-        // Determinăm numărul de string-uri pentru fiecare model
-        const headerStringsCount = this.makeItString(dataHeader()).length;
-        const sideMenuStringsCount = this.makeItString2(dataSideMenu()).length;
-        const heroStringsCount = this.makeItString3(dataHero()).length;
-        const footerStringsCount = this.makeItString4(dataFooter()).length;
+          const translatedData = this.processTranslation(
+            translatedStrings,
+            dataHeader,
+            dataSideMenu,
+            dataHero,
+            dataFooter
+          );
 
-        // Extragem traducerile pentru fiecare obiect
-        const headerTranslatedStrings = translatedStrings.splice(
-          0,
-          headerStringsCount
-        );
-        const sideMenuTranslatedStrings = translatedStrings.splice(
-          0,
-          sideMenuStringsCount
-        );
-        const heroTranslatedStrings = translatedStrings.splice(
-          0,
-          heroStringsCount
-        );
-        const footerTranslatedStrings = translatedStrings.splice(
-          0,
-          footerStringsCount
-        );
+          localStorage.setItem(cacheKey, JSON.stringify(translatedData));
 
-        // Reconstruim obiectele traduse
-        const translatedHeaderConfig = this.makeItObject(
-          headerTranslatedStrings,
-          dataHeader()
-        );
-        const translatedSideMenuConfig = this.makeItObject2(
-          sideMenuTranslatedStrings,
-          dataSideMenu()
-        );
-        const translatedHeroConfig = this.makeItObject3(
-          heroTranslatedStrings,
-          dataHero()
-        );
-        const translatedFooterConfig = this.makeItObject4(
-          footerTranslatedStrings,
-          dataFooter()
-        );
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, 2000 - elapsedTime);
 
-        // Actualizăm datele cu noile configurații traduse
-        dataHeader().company.name.title =
-          translatedHeaderConfig.company.name.title;
-        dataHeader().menu = translatedHeaderConfig.menu;
-
-        dataSideMenu().title = translatedSideMenuConfig.title;
-        dataSideMenu().links = translatedSideMenuConfig.links;
-
-        dataHero().title = translatedHeroConfig.title;
-        dataHero().description = translatedHeroConfig.description;
-        dataHero().button1 = translatedHeroConfig.button1;
-        dataHero().button2 = translatedHeroConfig.button2;
-
-        dataFooter().title = translatedFooterConfig.title;
-        dataFooter().about.title = translatedFooterConfig.about.title;
-        dataFooter().about.description =
-          translatedFooterConfig.about.description;
-        dataFooter().links.title = translatedFooterConfig.links.title;
-        dataFooter().links.links = translatedFooterConfig.links.links;
-        dataFooter().form.title = translatedFooterConfig.form.title;
-        dataFooter().form.mailPlaceholder =
-          translatedFooterConfig.form.mailPlaceholder;
-        dataFooter().form.messagePlaceholder =
-          translatedFooterConfig.form.messagePlaceholder;
-        dataFooter().form.buttonPlaceholder =
-          translatedFooterConfig.form.buttonPlaceholder;
+          setTimeout(() => {
+            this.applyTranslation(
+              translatedData,
+              dataHeader,
+              dataSideMenu,
+              dataHero,
+              dataFooter
+            );
+            this.loadingSubject.next(false);
+          }, remainingTime);
+        },
+        error: () => {
+          this.handleError(
+            'Eroare la traducere! Verifică conexiunea la internet.'
+          );
+        },
       });
   }
 
+  private handleError(message: string) {
+    this.errorMessageSubject.next(message);
+    this.loadingSubject.next(false);
+    setTimeout(() => this.errorMessageSubject.next(null), 5000); // Ascunde eroarea după 5 secunde
+  }
+
+  private processTranslation(
+    translatedStrings: string[],
+    dataHeader: Signal<HeaderConfigModel>,
+    dataSideMenu: Signal<SideMenuConfigModel>,
+    dataHero: Signal<HeroConfigModel>,
+    dataFooter: Signal<FooterConfigModel>
+  ) {
+    const headerStringsCount = this.makeItString(dataHeader()).length;
+    const sideMenuStringsCount = this.makeItString2(dataSideMenu()).length;
+    const heroStringsCount = this.makeItString3(dataHero()).length;
+    const footerStringsCount = this.makeItString4(dataFooter()).length;
+
+    return {
+      header: this.makeItObject(
+        translatedStrings.splice(0, headerStringsCount),
+        dataHeader()
+      ),
+      sideMenu: this.makeItObject2(
+        translatedStrings.splice(0, sideMenuStringsCount),
+        dataSideMenu()
+      ),
+      hero: this.makeItObject3(
+        translatedStrings.splice(0, heroStringsCount),
+        dataHero()
+      ),
+      footer: this.makeItObject4(
+        translatedStrings.splice(0, footerStringsCount),
+        dataFooter()
+      ),
+    };
+  }
+
+  private applyTranslation(
+    translatedData: any,
+    dataHeader: Signal<HeaderConfigModel>,
+    dataSideMenu: Signal<SideMenuConfigModel>,
+    dataHero: Signal<HeroConfigModel>,
+    dataFooter: Signal<FooterConfigModel>
+  ) {
+    dataHeader().company.name.title = translatedData.header.company.name.title;
+    dataHeader().menu = translatedData.header.menu;
+
+    dataSideMenu().title = translatedData.sideMenu.title;
+    dataSideMenu().links = translatedData.sideMenu.links;
+
+    dataHero().title = translatedData.hero.title;
+    dataHero().description = translatedData.hero.description;
+    dataHero().button1 = translatedData.hero.button1;
+    dataHero().button2 = translatedData.hero.button2;
+
+    dataFooter().title = translatedData.footer.title;
+    dataFooter().about.title = translatedData.footer.about.title;
+    dataFooter().about.description = translatedData.footer.about.description;
+    dataFooter().links.title = translatedData.footer.links.title;
+    dataFooter().links.links = translatedData.footer.links.links;
+    dataFooter().form.title = translatedData.footer.form.title;
+    dataFooter().form.mailPlaceholder =
+      translatedData.footer.form.mailPlaceholder;
+    dataFooter().form.messagePlaceholder =
+      translatedData.footer.form.messagePlaceholder;
+    dataFooter().form.buttonPlaceholder =
+      translatedData.footer.form.buttonPlaceholder;
+  }
+
   makeItString4(config: FooterConfigModel): string[] {
-    const result: string[] = [];
-
-    // Adaugă titlul principal
-    result.push(config.title);
-
-    // Adaugă titlul și descrierea din secțiunea "about"
-    result.push(config.about.title);
-    result.push(config.about.description);
-
-    // Adaugă titlul link-urilor și link-urile efective
-    result.push(config.links.title);
-    result.push(...config.links.links);
-
-    // Adaugă titlurile și placeholder-ele formularului
-    result.push(config.form.title);
-    result.push(config.form.mailPlaceholder);
-    result.push(config.form.messagePlaceholder);
-    result.push(config.form.buttonPlaceholder);
-
-    return result;
+    return [
+      config.title,
+      config.about.title,
+      config.about.description,
+      config.links.title,
+      ...config.links.links,
+      config.form.title,
+      config.form.mailPlaceholder,
+      config.form.messagePlaceholder,
+      config.form.buttonPlaceholder,
+    ];
   }
 
   makeItObject4(
@@ -151,28 +193,20 @@ export class LanguageSwitcherService {
     originalConfig: FooterConfigModel
   ): FooterConfigModel {
     return {
-      metaData: {
-        fixed: originalConfig.metaData.fixed,
-        transparent: originalConfig.metaData.transparent,
-      },
-
+      ...originalConfig,
       title: data.shift() || originalConfig.title,
-
-      style: originalConfig.style, // Păstrăm stilul neschimbat
-
       about: {
+        ...originalConfig.about,
         title: data.shift() || originalConfig.about.title,
         description: data.shift() || originalConfig.about.description,
-        phone: originalConfig.about.phone, // Păstrăm phone neschimbat
-        email: originalConfig.about.email, // Păstrăm email neschimbat
       },
-
       links: {
+        ...originalConfig.links,
         title: data.shift() || originalConfig.links.title,
         links: originalConfig.links.links.map(() => data.shift() || ''),
       },
-
       form: {
+        ...originalConfig.form,
         title: data.shift() || originalConfig.form.title,
         mailPlaceholder: data.shift() || originalConfig.form.mailPlaceholder,
         messagePlaceholder:
@@ -192,105 +226,76 @@ export class LanguageSwitcherService {
     originalConfig: HeroConfigModel
   ): HeroConfigModel {
     return {
-      title: data.shift() || originalConfig.title, // Extrage titlul
-      description: data.shift() || originalConfig.description, // Extrage descrierea
-      button1: data.shift() || originalConfig.button1, // Extrage textul primului buton
-      button2: data.shift() || originalConfig.button2, // Extrage textul celui de-al doilea buton
+      ...originalConfig,
+      title: data.shift() || originalConfig.title,
+      description: data.shift() || originalConfig.description,
+      button1: data.shift() || originalConfig.button1,
+      button2: data.shift() || originalConfig.button2,
     };
   }
 
   makeItString2(config: SideMenuConfigModel): string[] {
-    const result: string[] = [];
-
-    // Adaugă titlul meniului
-    result.push(config.title);
-
-    // Adaugă titlurile link-urilor și mini-titlurile
-    config.links.forEach((link) => {
-      result.push(link.title);
-      if (link.miniTitles != undefined) {
-        result.push(...link.miniTitles);
-      }
-    });
-
-    return result;
+    return [
+      config.title,
+      ...config.links.flatMap((link) => [
+        link.title,
+        ...(link.miniTitles || []),
+      ]),
+    ];
   }
 
   makeItObject2(
     data: string[],
     originalConfig: SideMenuConfigModel
   ): SideMenuConfigModel {
-    const newConfig: SideMenuConfigModel = {
-      title: data.shift() || '', // Extrage titlul meniului
-      links: [],
+    return {
+      ...originalConfig,
+      title: data.shift() || '',
+      links: originalConfig.links.map((link) => ({
+        ...link,
+        title: data.shift() || '',
+        miniTitles: link.miniTitles?.map(() => data.shift() || '') || [],
+      })),
     };
-
-    originalConfig.links.forEach((link) => {
-      const newLink = {
-        icon: link.icon, // Păstrăm icon-ul neschimbat
-        title: data.shift() || '', // Extrage titlul link-ului
-        miniTitles:
-          link.miniTitles != undefined
-            ? link.miniTitles.map(() => data.shift() || '')
-            : [], // Extrage mini-titlurile
-      };
-      newConfig.links.push(newLink);
-    });
-
-    return newConfig;
   }
 
   makeItString(config: HeaderConfigModel): string[] {
-    const result: string[] = [];
-
-    // Adaugă titlul companiei dacă este vizibil
-    if (config.company.name.show) {
-      result.push(config.company.name.title);
-    }
-
-    // Adaugă linkurile din meniu și sublinkurile
-    config.menu.forEach((menuItem) => {
-      result.push(menuItem.link);
-      if (menuItem.links != undefined) {
-        result.push(...menuItem.links);
-      }
-    });
-
-    return result;
+    return config.company.name.show
+      ? [
+          config.company.name.title,
+          ...config.menu.flatMap((menuItem) => [
+            menuItem.link,
+            ...(menuItem.links || []),
+          ]),
+        ]
+      : [
+          ...config.menu.flatMap((menuItem) => [
+            menuItem.link,
+            ...(menuItem.links || []),
+          ]),
+        ];
   }
 
   makeItObject(
     data: string[],
     originalConfig: HeaderConfigModel
   ): HeaderConfigModel {
-    const newConfig: HeaderConfigModel = {
-      metaData: {
-        fixed: originalConfig.metaData.fixed,
-        transparent: originalConfig.metaData.transparent,
-      },
+    return {
+      ...originalConfig,
       company: {
+        ...originalConfig.company,
         name: {
-          show: originalConfig.company.name.show,
+          ...originalConfig.company.name,
           title: originalConfig.company.name.show
-            ? data.shift() || ''
+            ? data.shift() || originalConfig.company.name.title
             : originalConfig.company.name.title,
         },
-        logo: { ...originalConfig.company.logo },
       },
-      menu: [],
+      menu: originalConfig.menu.map((menuItem) => ({
+        ...menuItem,
+        link: data.shift() || '',
+        links: menuItem.links?.map(() => data.shift() || '') || [],
+      })),
     };
-
-    originalConfig.menu.forEach((menuItem) => {
-      const newMenuItem = {
-        link: data.shift() || '', // Extrage link-ul principal
-        links:
-          menuItem.links != undefined
-            ? menuItem.links.map(() => data.shift() || '')
-            : [], // Extrage sublink-urile
-      };
-      newConfig.menu.push(newMenuItem);
-    });
-
-    return newConfig;
   }
 }
