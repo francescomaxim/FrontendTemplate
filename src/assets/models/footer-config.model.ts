@@ -1,6 +1,10 @@
 export interface FooterConfigModel {
+  metaData: {
+    fixed: boolean;
+    transparent: boolean;
+  };
   title: string;
-  style: string;
+  style: 'small' | 'large';
   about: {
     title: string;
     description: string;

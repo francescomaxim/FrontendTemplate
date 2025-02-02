@@ -151,6 +151,11 @@ export class LanguageSwitcherService {
     originalConfig: FooterConfigModel
   ): FooterConfigModel {
     return {
+      metaData: {
+        fixed: originalConfig.metaData.fixed,
+        transparent: originalConfig.metaData.transparent,
+      },
+
       title: data.shift() || originalConfig.title,
 
       style: originalConfig.style, // Păstrăm stilul neschimbat

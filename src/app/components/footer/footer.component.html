@@ -1,4 +1,11 @@
-<footer>
+<footer
+  [ngClass]="
+    (footerConfig()?.style == 'small' ? 'small ' : '') +
+    (footerConfig()?.metaData?.fixed == true ? 'fixed ' : '') +
+    (footerConfig()?.metaData?.transparent == true ? 'transparent ' : '')
+  "
+>
+  @if(footerConfig()?.style == 'large'){
   <div class="container">
     <div class="footer-content">
       <div class="footer-section about">
@@ -60,4 +67,11 @@
       {{ footerConfig()?.title }}
     </div>
   </div>
+  }@else {
+  <div class="small-footer">
+    <p>
+      {{ footerConfig()?.title }}
+    </p>
+  </div>
+  }
 </footer>

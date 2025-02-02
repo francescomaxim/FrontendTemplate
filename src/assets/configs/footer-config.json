@@ -1,5 +1,9 @@
 {
-  "title": "© 2025 Toate drepturile rezervate | Proiectat de [Numele Tău]",
+  "metaData": {
+    "fixed": false,
+    "transparent": false
+  },
+  "title": "© 2025 Toate drepturile rezervate | Proiectat de Maxim Francesco",
   "style": "large",
   "about": {
     "title": "Despre Noi",

@@ -1,10 +1,11 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfigService } from '../../config.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-footer',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './footer.component.html',
   styleUrls: ['./footer.component.css'],
 })
