@@ -5,6 +5,7 @@ import { HeaderConfigModel } from '../../../assets/models/header-config.model';
 import { SideMenuConfigModel } from '../../../assets/models/side-menu-config.model';
 import { HeroConfigModel } from '../../../assets/models/hero-config.model';
 import { FooterConfigModel } from '../../../assets/models/footer-config.model';
+import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -13,6 +14,10 @@ export class LanguageSwitcherService {
   private httpClient = inject(HttpClient);
   private url = 'https://translation.googleapis.com/language/translate/v2?key=';
   private key = key;
+
+  // BehaviorSubject pentru loading state
+  private loadingSubject = new BehaviorSubject<boolean>(false);
+  loading$ = this.loadingSubject.asObservable();
 
   translate(
     dataHeader: Signal<HeaderConfigModel>,
@@ -24,25 +29,31 @@ export class LanguageSwitcherService {
     const cacheKey = `translation_${language}`;
     const cachedTranslation = localStorage.getItem(cacheKey);
 
+    this.loadingSubject.next(true); // Pornim loading screen
+
     if (cachedTranslation) {
       console.log(`Using cached translation for language: ${language}`);
-      this.applyTranslation(
-        JSON.parse(cachedTranslation),
-        dataHeader,
-        dataSideMenu,
-        dataHero,
-        dataFooter
-      );
+      setTimeout(() => {
+        this.applyTranslation(
+          JSON.parse(cachedTranslation),
+          dataHeader,
+          dataSideMenu,
+          dataHero,
+          dataFooter
+        );
+        this.loadingSubject.next(false); // Oprim loading screen
+      }, 2000); // Asigură minim 2 secunde
       return;
     }
 
-    // Combinăm toate textele într-un singur array
     const textToTranslate = [
       ...this.makeItString(dataHeader()),
       ...this.makeItString2(dataSideMenu()),
       ...this.makeItString3(dataHero()),
       ...this.makeItString4(dataFooter()),
     ];
+
+    const startTime = Date.now();
 
     this.httpClient
       .post<{
@@ -56,7 +67,6 @@ export class LanguageSwitcherService {
           t.translatedText.replace('&#39;', "'")
         );
 
-        // Salvăm traducerea în cache
         const translatedData = this.processTranslation(
           translatedStrings,
           dataHeader,
@@ -67,13 +77,19 @@ export class LanguageSwitcherService {
 
         localStorage.setItem(cacheKey, JSON.stringify(translatedData));
 
-        this.applyTranslation(
-          translatedData,
-          dataHeader,
-          dataSideMenu,
-          dataHero,
-          dataFooter
-        );
+        const elapsedTime = Date.now() - startTime;
+        const remainingTime = Math.max(0, 2000 - elapsedTime);
+
+        setTimeout(() => {
+          this.applyTranslation(
+            translatedData,
+            dataHeader,
+            dataSideMenu,
+            dataHero,
+            dataFooter
+          );
+          this.loadingSubject.next(false); // Oprim loading screen după minim 2 secunde
+        }, remainingTime);
       });
   }
 

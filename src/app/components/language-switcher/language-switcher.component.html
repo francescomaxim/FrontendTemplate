@@ -6,3 +6,7 @@
     <li (click)="selectLanguage('KO')">KO</li>
   </ul>
 </div>
+
+<div *ngIf="loading$ | async" class="loading-overlay">
+  <div class="spinner"></div>
+</div>
