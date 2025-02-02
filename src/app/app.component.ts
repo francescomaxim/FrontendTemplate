@@ -13,7 +13,6 @@ import { ConfigService } from './config.service';
     RouterOutlet,
     HeaderComponent,
     FooterComponent,
-    SidebarComponent,
     CommonModule,
     HeroComponent,
   ],
