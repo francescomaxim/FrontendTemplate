@@ -41,7 +41,6 @@
 .dropdown-menu li:hover {
   background-color: #f1f1f1;
 }
-
 .loading-overlay {
   position: fixed;
   top: 0;
@@ -70,5 +69,34 @@
   }
   100% {
     transform: rotate(360deg);
+  }
+}
+
+.error-banner {
+  position: fixed;
+  top: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: red;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  z-index: 1001;
+  animation: fadeInOut 5s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
   }
 }

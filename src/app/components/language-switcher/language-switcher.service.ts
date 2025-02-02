@@ -15,9 +15,11 @@ export class LanguageSwitcherService {
   private url = 'https://translation.googleapis.com/language/translate/v2?key=';
   private key = key;
 
-  // BehaviorSubject pentru loading state
   private loadingSubject = new BehaviorSubject<boolean>(false);
   loading$ = this.loadingSubject.asObservable();
+
+  private errorMessageSubject = new BehaviorSubject<string | null>(null);
+  errorMessage$ = this.errorMessageSubject.asObservable();
 
   translate(
     dataHeader: Signal<HeaderConfigModel>,
@@ -29,10 +31,10 @@ export class LanguageSwitcherService {
     const cacheKey = `translation_${language}`;
     const cachedTranslation = localStorage.getItem(cacheKey);
 
-    this.loadingSubject.next(true); // Pornim loading screen
+    this.loadingSubject.next(true);
+    this.errorMessageSubject.next(null); // Resetăm eroarea
 
     if (cachedTranslation) {
-      console.log(`Using cached translation for language: ${language}`);
       setTimeout(() => {
         this.applyTranslation(
           JSON.parse(cachedTranslation),
@@ -41,8 +43,8 @@ export class LanguageSwitcherService {
           dataHero,
           dataFooter
         );
-        this.loadingSubject.next(false); // Oprim loading screen
-      }, 2000); // Asigură minim 2 secunde
+        this.loadingSubject.next(false);
+      }, 2000);
       return;
     }
 
@@ -58,39 +60,54 @@ export class LanguageSwitcherService {
     this.httpClient
       .post<{
         data: { translations: { translatedText: string }[] };
-      }>(this.url + this.key, {
-        q: textToTranslate,
-        target: language,
-      })
-      .subscribe((response) => {
-        const translatedStrings = response.data.translations.map((t) =>
-          t.translatedText.replace('&#39;', "'")
-        );
+      }>(this.url + this.key, { q: textToTranslate, target: language })
+      .subscribe({
+        next: (response) => {
+          if (!response?.data?.translations?.length) {
+            this.handleError('Nu s-au primit date valide de la API.');
+            return;
+          }
 
-        const translatedData = this.processTranslation(
-          translatedStrings,
-          dataHeader,
-          dataSideMenu,
-          dataHero,
-          dataFooter
-        );
+          const translatedStrings = response.data.translations.map((t) =>
+            t.translatedText.replace('&#39;', "'")
+          );
 
-        localStorage.setItem(cacheKey, JSON.stringify(translatedData));
-
-        const elapsedTime = Date.now() - startTime;
-        const remainingTime = Math.max(0, 2000 - elapsedTime);
-
-        setTimeout(() => {
-          this.applyTranslation(
-            translatedData,
+          const translatedData = this.processTranslation(
+            translatedStrings,
             dataHeader,
             dataSideMenu,
             dataHero,
             dataFooter
           );
-          this.loadingSubject.next(false); // Oprim loading screen după minim 2 secunde
-        }, remainingTime);
+
+          localStorage.setItem(cacheKey, JSON.stringify(translatedData));
+
+          const elapsedTime = Date.now() - startTime;
+          const remainingTime = Math.max(0, 2000 - elapsedTime);
+
+          setTimeout(() => {
+            this.applyTranslation(
+              translatedData,
+              dataHeader,
+              dataSideMenu,
+              dataHero,
+              dataFooter
+            );
+            this.loadingSubject.next(false);
+          }, remainingTime);
+        },
+        error: () => {
+          this.handleError(
+            'Eroare la traducere! Verifică conexiunea la internet.'
+          );
+        },
       });
+  }
+
+  private handleError(message: string) {
+    this.errorMessageSubject.next(message);
+    this.loadingSubject.next(false);
+    setTimeout(() => this.errorMessageSubject.next(null), 5000); // Ascunde eroarea după 5 secunde
   }
 
   private processTranslation(

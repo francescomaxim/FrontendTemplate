@@ -23,6 +23,7 @@ export class LanguageSwitcherComponent {
   footerData = input.required<FooterConfigModel>();
 
   loading$ = this.languageService.loading$; // Legăm la serviciu
+  errorMessage$ = this.languageService.errorMessage$;
 
   selectLanguage(language: string): void {
     this.selectedLanguage = language;
