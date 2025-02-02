@@ -1,11 +1,15 @@
 {
+  "metaData": {
+    "fixed": false,
+    "transparent": false
+  },
   "company": {
     "name": {
-      "show": "true",
+      "show": true,
       "title": "Titlul meu"
     },
     "logo": {
-      "show": "false",
+      "show": true,
       "url": "url",
       "alt": "alt"
     }

@@ -68,6 +68,10 @@
   border-radius: 10px;
 }
 
+.headerFixed {
+  margin-top: 5%;
+}
+
 /* Responsive Styles */
 @media (max-width: 992px) {
   .hero {

@@ -1,8 +1,22 @@
-<header>
+<header
+  [ngClass]="
+    (headerConfig()?.metaData?.fixed == true ? 'fixed ' : '') +
+    (headerConfig()?.metaData?.transparent == true ? 'transparent ' : '')
+  "
+>
   <div class="container">
-    <a routerLink="/" class="logo">{{
-      headerConfig()?.company?.name?.title
-    }}</a>
+    <div class="left-menu">
+      @if(appConfig()?.showSideMenu == true){
+      <app-sidebar></app-sidebar>
+      }
+      <a routerLink="/" class="logo">
+        @if(headerConfig()?.company?.logo?.show == true){
+        <img src="assets/images/logo.jpg" alt="logo of the company" />
+        } @if(headerConfig()?.company?.name?.show == true){
+        {{ headerConfig()?.company?.name?.title }}
+        }
+      </a>
+    </div>
     <nav>
       <ul [class.mobile-opened]="mobileMenuOpen">
         @for(link of headerConfig()?.menu; track link.link){ @if(link.links ==
@@ -26,6 +40,7 @@
         } }
         <li class="mobile-close" (click)="toggleMobileMenu()">&times;</li>
 
+        @if(appConfig()?.showLanguageSwitcher == true){
         <li>
           <app-language-switcher
             [headerData]="headerConfig()!"
@@ -34,6 +49,7 @@
             [footerData]="footerConfig()!"
           ></app-language-switcher>
         </li>
+        }
       </ul>
       <div class="mobile-toggle" (click)="toggleMobileMenu()">
         <i class="fas fa-bars" *ngIf="!mobileMenuOpen"></i>

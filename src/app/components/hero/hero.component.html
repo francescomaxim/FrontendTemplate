@@ -1,4 +1,8 @@
-<section class="hero">
+<section
+  [ngClass]="
+    'hero ' + (headerConfig()?.metaData?.fixed == true ? 'headerFixed' : '')
+  "
+>
   <div class="hero-content">
     <h1 class="hero-title">{{ heroConfig()?.title }}</h1>
     <p class="hero-subtitle">{{ heroConfig()?.description }}</p>

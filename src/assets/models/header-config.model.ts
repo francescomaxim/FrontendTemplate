@@ -1,4 +1,8 @@
 export interface HeaderConfigModel {
+  metaData: {
+    fixed: boolean;
+    transparent: boolean;
+  };
   company: {
     name: {
       show: boolean;

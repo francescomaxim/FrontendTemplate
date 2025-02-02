@@ -89,7 +89,6 @@ aside.open {
 }
 
 .hamburger-btn {
-  position: fixed;
   top: 20px;
   left: 20px;
   z-index: 1001; /* Asigura-te ca e deasupra sidebar-ului */
@@ -103,26 +102,3 @@ aside.open {
   font-size: 24px;
   color: #000; /* Alege o culoare potrivita pentru header-ul tau */
 }
-
-/* Responsive Styles */
-/* @media (max-width: 768px) {
-  aside {
-    width: 85%;
-    left: -100%; */
-/* Adjust the initial hiding position */
-/* }
-  aside.open {
-    left: 0;
-  }
-} */
-
-/* aside.always-open {
-  left: 0;
-  width: 250px;
-} */
-
-/* @media (max-width: 768px) {
-  aside.always-open {
-    width: 0;
-  }
-} */
