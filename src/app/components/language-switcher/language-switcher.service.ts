@@ -259,6 +259,10 @@ export class LanguageSwitcherService {
     originalConfig: HeaderConfigModel
   ): HeaderConfigModel {
     const newConfig: HeaderConfigModel = {
+      metaData: {
+        fixed: originalConfig.metaData.fixed,
+        transparent: originalConfig.metaData.transparent,
+      },
       company: {
         name: {
           show: originalConfig.company.name.show,
