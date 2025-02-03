@@ -51,7 +51,9 @@
         </li>
 
         } @if(headerConfig()?.auth == true){
-        <li>auth</li>
+        <li>
+          <app-auth-menu></app-auth-menu>
+        </li>
         }
       </ul>
       <div class="mobile-toggle" (click)="toggleMobileMenu()">
