@@ -50,6 +50,8 @@
           ></app-language-switcher>
         </li>
 
+        } @if(headerConfig()?.auth == true){
+        <li>auth</li>
         }
       </ul>
       <div class="mobile-toggle" (click)="toggleMobileMenu()">

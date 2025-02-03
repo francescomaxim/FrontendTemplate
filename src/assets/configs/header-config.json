@@ -25,5 +25,6 @@
     {
       "link": "Contact"
     }
-  ]
+  ],
+  "auth": true
 }
