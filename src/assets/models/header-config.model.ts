@@ -18,4 +18,5 @@ export interface HeaderConfigModel {
     link: string;
     links: string[];
   }[];
+  auth: boolean;
 }
