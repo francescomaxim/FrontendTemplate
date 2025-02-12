@@ -5,6 +5,10 @@ header {
   width: 100%;
 }
 
+#company:hover {
+  cursor: pointer;
+}
+
 .fixed {
   position: fixed;
 }
