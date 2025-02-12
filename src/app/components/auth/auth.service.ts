@@ -1,10 +1,11 @@
-import { Injectable } from '@angular/core';
+import { inject, Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { catchError, tap } from 'rxjs/operators';
 import { throwError, BehaviorSubject } from 'rxjs';
 
 import { User } from './user.model';
+import { AuthMenuService } from './auth-menu/auth-menu.service';
 
 export interface AuthResponseData {
   kind: string;
@@ -18,6 +19,7 @@ export interface AuthResponseData {
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
+  private authMenuService = inject(AuthMenuService);
   user = new BehaviorSubject<User | null>(null);
   private tokenExpirationTimer: any;
 
@@ -36,14 +38,25 @@ export class AuthService {
       .pipe(
         catchError(this.handleError),
         tap((resData) => {
-          this.handleAuthentication(
-            resData.email,
-            resData.localId,
-            resData.idToken,
-            +resData.expiresIn
-          );
+          this.sendEmailVerification(resData.idToken);
+          this.router.navigate(['/email-verification']);
         })
       );
+  }
+
+  sendEmailVerification(idToken: string) {
+    return this.http
+      .post<{ email: string }>(
+        'https://identitytoolkit.googleapis.com/v1/accounts:sendOobCode?key=AIzaSyCvdIqpabyl7Nl14se07awrvOGATE5AfFg',
+        {
+          requestType: 'VERIFY_EMAIL',
+          idToken: idToken,
+        }
+      )
+      .subscribe({
+        next: (res) => console.log(`Verification email sent to ${res.email}`),
+        error: (err) => console.error('Error sending verification email', err),
+      });
   }
 
   login(email: string, password: string) {
@@ -59,14 +72,54 @@ export class AuthService {
       .pipe(
         catchError(this.handleError),
         tap((resData) => {
-          this.handleAuthentication(
-            resData.email,
-            resData.localId,
-            resData.idToken,
-            +resData.expiresIn
-          );
+          this.checkEmailVerification(resData.idToken);
         })
       );
+  }
+
+  checkEmailVerification(idToken: string) {
+    this.http
+      .post<{
+        users: {
+          localId: string;
+          email: string;
+          emailVerified: boolean;
+        }[];
+      }>(
+        'https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=AIzaSyCvdIqpabyl7Nl14se07awrvOGATE5AfFg',
+        {
+          idToken: idToken,
+        }
+      )
+      .subscribe({
+        next: (resData) => {
+          if (resData.users[0]?.emailVerified) {
+            this.handleAuthentication(
+              resData.users[0].email,
+              resData.users[0].localId,
+              idToken,
+              3600
+            );
+          } else {
+            console.error('Please verify your email before logging in.');
+          }
+        },
+        error: (err) => console.error('Error checking email verification', err),
+      });
+  }
+
+  confirmEmailVerification(oobCode: string) {
+    return this.http
+      .post<{ email: string }>(
+        'https://identitytoolkit.googleapis.com/v1/accounts:update?key=AIzaSyCvdIqpabyl7Nl14se07awrvOGATE5AfFg',
+        {
+          oobCode: oobCode,
+        }
+      )
+      .subscribe({
+        next: (res) => console.log(`Email ${res.email} verified successfully!`),
+        error: (err) => console.error('Error verifying email', err),
+      });
   }
 
   autoLogin() {
@@ -122,6 +175,7 @@ export class AuthService {
     const user = new User(email, userId, token, expirationDate);
     this.user.next(user);
     this.autoLogout(expiresIn * 1000);
+    this.authMenuService.mode.set(1);
     localStorage.setItem('userData', JSON.stringify(user));
   }
 

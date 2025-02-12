@@ -1,3 +1,7 @@
 <div>
+  @if(mode() == 0){
   <button (click)="goToAuth()">Log In</button>
+  }@else {
+  <button (click)="goToProfile()">Profile</button>
+  }
 </div>
