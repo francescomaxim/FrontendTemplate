@@ -4,6 +4,7 @@ import { LanguageSwitcherComponent } from '../language-switcher/language-switche
 import { ConfigService } from '../../config.service';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 import { AuthMenuComponent } from '../auth/auth-menu/auth-menu.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-header',
@@ -19,6 +20,7 @@ import { AuthMenuComponent } from '../auth/auth-menu/auth-menu.component';
 })
 export class HeaderComponent {
   //config part
+  private router = inject(Router);
   private config = inject(ConfigService);
   appConfig = this.config.appConfig;
   headerConfig = this.config.headerConfig;
@@ -29,6 +31,11 @@ export class HeaderComponent {
 
   ngOnInit() {
     this.config.getHeaderConfig();
+  }
+
+  //go to home
+  goToHome() {
+    this.router.navigate(['home']);
   }
 
   //mobile

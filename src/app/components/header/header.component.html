@@ -9,7 +9,7 @@
       @if(appConfig()?.showSideMenu == true){
       <app-sidebar></app-sidebar>
       }
-      <a routerLink="/" class="logo">
+      <a id="company" routerLink="/" class="logo" (click)="goToHome()">
         @if(headerConfig()?.company?.logo?.show == true){
         <img src="assets/images/logo.jpg" alt="logo of the company" />
         } @if(headerConfig()?.company?.name?.show == true){
